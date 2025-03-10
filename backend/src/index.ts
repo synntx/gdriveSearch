@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import session from "express-session";
-import authRoutes from "./routes/auth.route.";
 import driveRoutes from "./routes/drive.route";
 import ingestRoutes from "./routes/ingest.route";
 import searchRoutes from "./routes/search.route";
+import authRoutes from "./routes/auth.route.";
 
 const app = express();
 
@@ -12,18 +12,24 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
-  }),
+  })
 );
 
 app.use(express.json());
+
+const isProd = process.env.NODE_ENV === "production";
 
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "sessionssecret",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, sameSite: "lax" }, // --- Use { secure : true } for HTTPS ---
-  }),
+    cookie: {
+      secure: isProd, // secure in production
+      sameSite: isProd ? "strict" : "lax",
+      httpOnly: true,
+    },
+  })
 );
 
 app.use("/auth", authRoutes);

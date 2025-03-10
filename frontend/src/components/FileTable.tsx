@@ -1,5 +1,5 @@
 import { FileIcon, FileTextIcon, Loader2 } from "lucide-react";
-import { FileInfo } from "../services/api";
+import { FileInfo } from "../utils/api";
 
 interface FileTableProps {
   files: FileInfo[];

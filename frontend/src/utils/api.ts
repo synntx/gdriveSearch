@@ -1,4 +1,5 @@
 import axios from "axios";
+// @ts-expect-error AxiosResponse
 import { AxiosResponse } from "axios";
 
 const API_URL = "http://localhost:3001";

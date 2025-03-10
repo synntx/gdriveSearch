@@ -6,6 +6,7 @@ export const searchFiles = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
+  const completeTime = new Date();
   if (!req.session.tokens?.access_token) {
     res.status(401).json({ error: "User not authenticated" });
     return;
@@ -28,7 +29,19 @@ export const searchFiles = async (
       }ms`,
     );
 
+    const searchVectorsTime = new Date();
     const searchResults = await searchVectors(embedding);
+    console.log(
+      `Searched for files with query "${query}" in ${
+        new Date().getTime() - searchVectorsTime.getTime()
+      }ms`,
+    );
+
+    // Complete time taken by embedding generation and search
+
+    console.log(
+      `Search finished in ${new Date().getTime() - startTime.getTime()}ms`,
+    );
 
     const formattedResults = searchResults.map((result) => ({
       score: result.score,
@@ -37,8 +50,14 @@ export const searchFiles = async (
       driveLink: result.metadata?.driveLink,
     }));
 
+    console.log(
+      `Completed search for files with query "${query}" in ${
+        new Date().getTime() - completeTime.getTime()
+      }ms`,
+    );
     res.json({
       query,
+      timeTaken: new Date().getTime() - completeTime.getTime(),
       results: formattedResults,
     });
   } catch (error) {
